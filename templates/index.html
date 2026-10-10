@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>To-do</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css">
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body>
+  <main>
+    <h1>To-do</h1>
+    <form hx-post="/todos" hx-target="#todos" hx-on::after-request="this.reset()">
+      <input name="text" placeholder="What needs doing?" autofocus required>
+    </form>
+    <div id="todos">{{template "list" .}}</div>
+  </main>
+</body>
+</html>
+
+{{define "list"}}
+<ul>
+  {{range .}}
+  <li>
+    <label>
+      <input type="checkbox" {{if .Done}}checked{{end}}
+             hx-post="/todos/{{.ID}}/toggle" hx-target="#todos">
+      {{if .Done}}<del>{{.Text}}</del>{{else}}{{.Text}}{{end}}
+    </label>
+    <a href="#" hx-delete="/todos/{{.ID}}" hx-target="#todos">delete</a>
+  </li>
+  {{else}}
+  <li>Nothing to do.</li>
+  {{end}}
+</ul>
+{{end}}
